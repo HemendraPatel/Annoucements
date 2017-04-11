@@ -1,0 +1,447 @@
+{
+  "errors": [],
+  "warnings": [],
+  "version": "1.13.3",
+  "hash": "18611eae5472d2fda89a",
+  "publicPath": "",
+  "assetsByChunkName": {
+    "announcements.bundle": [
+      "announcements.bundle.js",
+      "announcements.bundle.js.map"
+    ]
+  },
+  "assets": [
+    {
+      "name": "announcements.bundle.js",
+      "size": 24575,
+      "chunks": [
+        0
+      ],
+      "chunkNames": [
+        "announcements.bundle"
+      ]
+    },
+    {
+      "name": "announcements.bundle.js.map",
+      "size": 36095,
+      "chunks": [
+        0
+      ],
+      "chunkNames": [
+        "announcements.bundle"
+      ]
+    }
+  ],
+  "chunks": [
+    {
+      "id": 0,
+      "rendered": true,
+      "initial": true,
+      "entry": true,
+      "extraAsync": false,
+      "size": 21671,
+      "names": [
+        "announcements.bundle"
+      ],
+      "files": [
+        "announcements.bundle.js",
+        "announcements.bundle.js.map"
+      ],
+      "hash": "28e93fe72966543c27c1",
+      "parents": [],
+      "origins": [
+        {
+          "moduleId": 0,
+          "module": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+          "moduleName": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "loc": "",
+          "name": "announcements.bundle",
+          "reasons": []
+        }
+      ]
+    }
+  ],
+  "modules": [
+    {
+      "id": 0,
+      "identifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+      "name": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+      "index": 0,
+      "index2": 11,
+      "size": 6411,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": null,
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [],
+      "source": "\"use strict\";\nvar __extends = (this && this.__extends) || function (d, b) {\n    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];\n    function __() { this.constructor = d; }\n    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n};\nvar sp_core_library_1 = require(\"@microsoft/sp-core-library\");\nvar sp_webpart_base_1 = require(\"@microsoft/sp-webpart-base\");\n/* Hemendra Patel - Import SP Environment Interactions */\nvar sp_lodash_subset_1 = require(\"@microsoft/sp-lodash-subset\");\n/* Hemendra Patel - Update/Import Style for calendarDate */\nvar Announcements_module_scss_1 = require(\"./Announcements.module.scss\");\nvar strings = require(\"announcementsStrings\");\n/* Hemendra Patel - ADD Code for Sample Data If rendered on local workbench */\nvar MockHttpClient_1 = require(\"./MockHttpClient\");\nvar sp_core_library_2 = require(\"@microsoft/sp-core-library\");\nvar sp_http_1 = require(\"@microsoft/sp-http\");\nvar AnnouncementsWebPart = (function (_super) {\n    __extends(AnnouncementsWebPart, _super);\n    function AnnouncementsWebPart() {\n        return _super !== null && _super.apply(this, arguments) || this;\n    }\n    /* My Code start here */\n    /*\n    private _getListData(): Promise<ISPLists> {\n      return this.context.spHttpClient.get(this.context.pageContext.web.absoluteUrl + `/_api/web/lists?$filter=Hidden eq false`, SPHttpClient.configurations.v1)\n        .then((response: SPHttpClientResponse) => {\n          return response.json();\n        });\n    }\n    */\n    /* Hemendra Patel - Get All SP Announcements from SP List */\n    AnnouncementsWebPart.prototype._getListData = function () {\n        return this.context.spHttpClient.get(this.context.pageContext.web.absoluteUrl + \"/_api/web/lists/GetByTitle('Announcements')/Items\", sp_http_1.SPHttpClient.configurations.v1)\n            .then(function (response) {\n            return response.json();\n        });\n    };\n    /* Hemendra Patel - Get All Sample Announcements from Mock List */\n    AnnouncementsWebPart.prototype._getMockListData = function () {\n        return MockHttpClient_1.default.get()\n            .then(function (data) {\n            var listData = { value: data };\n            return listData;\n        });\n    };\n    /* Hemendra Patel - Format Date into Month Year */\n    AnnouncementsWebPart.prototype._getMonthYear = function (datestr) {\n        var months;\n        months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"];\n        var mth = parseInt(datestr.substring(5, 7)) - 1;\n        return (months[mth] + \" \" + datestr.substring(0, 4));\n    };\n    /* Hemendra Patel - Format Date into Day */\n    AnnouncementsWebPart.prototype._getDay = function (datestr) {\n        return (datestr.substring(8, 10));\n    };\n    /* Hemendra Patel - Check Environment and Render Results */\n    AnnouncementsWebPart.prototype._renderListAsync = function () {\n        var _this = this;\n        // Local environment\n        if (sp_core_library_2.Environment.type === sp_core_library_2.EnvironmentType.Local) {\n            this._getMockListData().then(function (response) {\n                _this._renderList(response.value);\n            });\n        }\n        else if (sp_core_library_2.Environment.type == sp_core_library_2.EnvironmentType.SharePoint ||\n            sp_core_library_2.Environment.type == sp_core_library_2.EnvironmentType.ClassicSharePoint) {\n            this._getListData()\n                .then(function (response) {\n                _this._renderList(response.value);\n            });\n        }\n    };\n    AnnouncementsWebPart.prototype._renderList = function (items) {\n        /*  let html: string = '';\n          items.forEach((item: ISPList) => {\n            html += `\n              <ul class=\"${styles.list}\">\n                  <li class=\"${styles.listItem}\">\n                      <span class=\"ms-font-l\">${item.Title}</span>\n                  </li>\n              </ul>`;\n          });\n        \n          const listContainer: Element = this.domElement.querySelector('#spListContainer');\n          listContainer.innerHTML = html;\n        */\n        var _this = this;\n        var html = '<table width=100% border-collapse: collapse; >';\n        items.forEach(function (item) {\n            html = html + (\"\\n        <tr>\\n        <td width=10%>\\n        <div class=\\\"\" + Announcements_module_scss_1.default.calendarDate + \"\\\">\\n            <strong>\" + _this._getMonthYear(item.Expires) + \"</strong>\\n            <span>\" + _this._getDay(item.Expires) + \"</span>\\n        </div>\\n        <td>\\n        <p class=\\\"ms-font-l ms-fontColor-black\\\">\" + item.Title + \"</p>\\n        </td>\\n    </tr>\\n    \");\n        });\n        html += \"</table>\";\n        var listContainer = this.domElement.querySelector('#spListContainer');\n        listContainer.innerHTML = html;\n    };\n    /* My Code end here */\n    AnnouncementsWebPart.prototype.render = function () {\n        this.domElement.innerHTML = \"\\n    <div class=\\\"\" + Announcements_module_scss_1.default.helloWorld + \"\\\">\\n      <p class=\\\"ms-font-l ms-fontColor-black\\\">Loading from \" + sp_lodash_subset_1.escape(this.context.pageContext.web.title) + \"</p>\\n      <div id=\\\"spListContainer\\\" />\\n    </div>\";\n        this._renderListAsync();\n    };\n    Object.defineProperty(AnnouncementsWebPart.prototype, \"dataVersion\", {\n        get: function () {\n            return sp_core_library_1.Version.parse('1.0');\n        },\n        enumerable: true,\n        configurable: true\n    });\n    AnnouncementsWebPart.prototype.getPropertyPaneConfiguration = function () {\n        return {\n            pages: [\n                {\n                    header: {\n                        description: strings.PropertyPaneDescription\n                    },\n                    groups: [\n                        {\n                            groupName: strings.BasicGroupName,\n                            groupFields: [\n                                sp_webpart_base_1.PropertyPaneTextField('description', {\n                                    label: strings.DescriptionFieldLabel\n                                })\n                            ]\n                        }\n                    ]\n                }\n            ]\n        };\n    };\n    return AnnouncementsWebPart;\n}(sp_webpart_base_1.BaseClientSideWebPart));\nObject.defineProperty(exports, \"__esModule\", { value: true });\nexports.default = AnnouncementsWebPart;\n\n"
+    },
+    {
+      "id": 1,
+      "identifier": "external \"@microsoft/sp-core-library\"",
+      "name": "external \"@microsoft/sp-core-library\"",
+      "index": 1,
+      "index2": 0,
+      "size": 42,
+      "cacheable": false,
+      "built": false,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+          "module": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "moduleName": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "type": "cjs require",
+          "userRequest": "@microsoft/sp-core-library",
+          "loc": "7:24-61"
+        },
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+          "module": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "moduleName": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "type": "cjs require",
+          "userRequest": "@microsoft/sp-core-library",
+          "loc": "16:24-61"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "identifier": "external \"@microsoft/sp-webpart-base\"",
+      "name": "external \"@microsoft/sp-webpart-base\"",
+      "index": 2,
+      "index2": 1,
+      "size": 42,
+      "cacheable": false,
+      "built": false,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+          "module": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "moduleName": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "type": "cjs require",
+          "userRequest": "@microsoft/sp-webpart-base",
+          "loc": "8:24-61"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "identifier": "external \"@microsoft/sp-lodash-subset\"",
+      "name": "external \"@microsoft/sp-lodash-subset\"",
+      "index": 3,
+      "index2": 2,
+      "size": 42,
+      "cacheable": false,
+      "built": false,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+          "module": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "moduleName": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "type": "cjs require",
+          "userRequest": "@microsoft/sp-lodash-subset",
+          "loc": "10:25-63"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "identifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\Announcements.module.scss.js",
+      "name": "./lib/webparts/announcements/Announcements.module.scss.js",
+      "index": 4,
+      "index2": 7,
+      "size": 515,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+          "module": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "moduleName": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "type": "cjs require",
+          "userRequest": "./Announcements.module.scss",
+          "loc": "12:34-72"
+        }
+      ],
+      "source": "\"use strict\";\n/* tslint:disable */\nrequire('./Announcements.module.css');\nvar styles = {\n    helloWorld: 'helloWorld_cb4fdf7a',\n    container: 'container_cb4fdf7a',\n    row: 'row_cb4fdf7a',\n    calendarDate: 'calendarDate_cb4fdf7a',\n    tr: 'tr_cb4fdf7a',\n    th: 'th_cb4fdf7a',\n    listItem: 'listItem_cb4fdf7a',\n    list: 'list_cb4fdf7a',\n    button: 'button_cb4fdf7a',\n    label: 'label_cb4fdf7a',\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nexports.default = styles;\n/* tslint:enable */ \n\n"
+    },
+    {
+      "id": 5,
+      "identifier": "C:\\mycode\\Annoucements\\node_modules\\@microsoft\\loader-load-themed-styles\\lib\\index.js!C:\\mycode\\Annoucements\\node_modules\\css-loader\\index.js?-minimize!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\Announcements.module.css",
+      "name": "./lib/webparts/announcements/Announcements.module.css",
+      "index": 5,
+      "index2": 6,
+      "size": 442,
+      "cacheable": false,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\Announcements.module.scss.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 4,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\Announcements.module.scss.js",
+          "module": "./lib/webparts/announcements/Announcements.module.scss.js",
+          "moduleName": "./lib/webparts/announcements/Announcements.module.scss.js",
+          "type": "cjs require",
+          "userRequest": "./Announcements.module.css",
+          "loc": "3:0-37"
+        }
+      ],
+      "source": "var content = require(\"!!../../../node_modules/css-loader/index.js?-minimize!./Announcements.module.css\");\nvar loader = require(\"C:\\\\mycode\\\\Annoucements\\\\node_modules\\\\@microsoft\\\\load-themed-styles\\\\lib\\\\index.js\");\n\nif(typeof content === \"string\") content = [[module.id, content]];\n\n// add the styles to the DOM\nfor (var i = 0; i < content.length; i++) loader.loadStyles(content[i][1]);\n\nif(content.locals) module.exports = content.locals;"
+    },
+    {
+      "id": 6,
+      "identifier": "C:\\mycode\\Annoucements\\node_modules\\css-loader\\index.js?-minimize!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\Announcements.module.css",
+      "name": "./~/css-loader?-minimize!./lib/webparts/announcements/Announcements.module.css",
+      "index": 6,
+      "index2": 4,
+      "size": 2610,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\mycode\\Annoucements\\node_modules\\@microsoft\\loader-load-themed-styles\\lib\\index.js!C:\\mycode\\Annoucements\\node_modules\\css-loader\\index.js?-minimize!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\Announcements.module.css",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 5,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\@microsoft\\loader-load-themed-styles\\lib\\index.js!C:\\mycode\\Annoucements\\node_modules\\css-loader\\index.js?-minimize!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\Announcements.module.css",
+          "module": "./lib/webparts/announcements/Announcements.module.css",
+          "moduleName": "./lib/webparts/announcements/Announcements.module.css",
+          "type": "cjs require",
+          "userRequest": "!!../../../node_modules/css-loader/index.js?-minimize!./Announcements.module.css",
+          "loc": "1:14-105"
+        }
+      ],
+      "source": "exports = module.exports = require(\"../../../node_modules/css-loader/lib/css-base.js\")();\n// imports\n\n\n// module\nexports.push([module.id, \".helloWorld_cb4fdf7a .container_cb4fdf7a{max-width:700px;margin:0 auto;box-shadow:0 2px 4px 0 rgba(0,0,0,.2),0 25px 50px 0 rgba(0,0,0,.1)}.helloWorld_cb4fdf7a .row_cb4fdf7a{padding:20px}.helloWorld_cb4fdf7a div.calendarDate_cb4fdf7a{font-size:1em;display:block;position:relative;width:4em;height:4em;background-color:#fff;border-radius:.7em;-moz-border-radius:.7em;box-shadow:0 1px 0 #bdbdbd,0 2px 0 #fff,0 3px 0 #bdbdbd,0 4px 0 #fff,0 5px 0 #bdbdbd,0 0 0 1px #bdbdbd;overflow:hidden}.helloWorld_cb4fdf7a div.calendarDate_cb4fdf7a *{display:block;width:100%;font-size:.8em;font-weight:700;font-style:normal;text-align:center}.helloWorld_cb4fdf7a div.calendarDate_cb4fdf7a strong{position:absolute;top:0;padding:.4em 0;color:#fff;background-color:#4CAF50;border-bottom:1px;box-shadow:0 2px 0 #0078d7}.helloWorld_cb4fdf7a div.calendarDate_cb4fdf7a span{font-size:2em;letter-spacing:-.05em;padding-top:.7em;color:#ADBFB3}.helloWorld_cb4fdf7a .tr_cb4fdf7a:nth-child(even){background-color:#ADBFB3;padding-top:5px;padding-bottom:5px}.helloWorld_cb4fdf7a .th_cb4fdf7a{background-color:#4CAF50;color:#3A403C}.helloWorld_cb4fdf7a .listItem_cb4fdf7a{max-width:715px;margin:5px auto 5px auto;box-shadow:0 0 4px 0 rgba(0,0,0,.2),0 25px 50px 0 rgba(0,0,0,.1)}.helloWorld_cb4fdf7a .list_cb4fdf7a{color:#333;font-family:'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;font-size:14px;font-weight:400;box-sizing:border-box;margin:10;padding:10;line-height:50px;list-style-type:none;box-shadow:0 4px 4px 0 rgba(0,0,0,.2),0 25px 50px 0 rgba(0,0,0,.1)}.helloWorld_cb4fdf7a .listItem_cb4fdf7a{color:#333;vertical-align:center;font-family:'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;font-size:14px;font-weight:400;box-sizing:border-box;margin:0;padding:0;box-shadow:none;padding:9px 28px 3px;position:relative}.helloWorld_cb4fdf7a .button_cb4fdf7a{text-decoration:none;height:32px;min-width:80px;background-color:#0078d7;border-color:#0078d7;color:#fff;outline:transparent;position:relative;font-family:\\\"Segoe UI WestEuropean\\\",\\\"Segoe UI\\\",-apple-system,BlinkMacSystemFont,Roboto,\\\"Helvetica Neue\\\",sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;font-weight:400;border-width:0;text-align:center;cursor:pointer;display:inline-block;padding:0 16px}.helloWorld_cb4fdf7a .button_cb4fdf7a .label_cb4fdf7a{font-weight:600;font-size:14px;height:32px;line-height:32px;margin:0 4px;vertical-align:top;display:inline-block}\", \"\"]);\n\n// exports\n"
+    },
+    {
+      "id": 7,
+      "identifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\node_modules\\css-loader\\lib\\css-base.js",
+      "name": "./~/css-loader/lib/css-base.js",
+      "index": 7,
+      "index2": 3,
+      "size": 1506,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\mycode\\Annoucements\\node_modules\\css-loader\\index.js?-minimize!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\Announcements.module.css",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 6,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\css-loader\\index.js?-minimize!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\Announcements.module.css",
+          "module": "./~/css-loader?-minimize!./lib/webparts/announcements/Announcements.module.css",
+          "moduleName": "./~/css-loader?-minimize!./lib/webparts/announcements/Announcements.module.css",
+          "type": "cjs require",
+          "userRequest": "../../../node_modules/css-loader/lib/css-base.js",
+          "loc": "1:27-86"
+        }
+      ],
+      "source": "/*\r\n\tMIT License http://www.opensource.org/licenses/mit-license.php\r\n\tAuthor Tobias Koppers @sokra\r\n*/\r\n// css base code, injected by the css-loader\r\nmodule.exports = function() {\r\n\tvar list = [];\r\n\r\n\t// return the list of modules as css string\r\n\tlist.toString = function toString() {\r\n\t\tvar result = [];\r\n\t\tfor(var i = 0; i < this.length; i++) {\r\n\t\t\tvar item = this[i];\r\n\t\t\tif(item[2]) {\r\n\t\t\t\tresult.push(\"@media \" + item[2] + \"{\" + item[1] + \"}\");\r\n\t\t\t} else {\r\n\t\t\t\tresult.push(item[1]);\r\n\t\t\t}\r\n\t\t}\r\n\t\treturn result.join(\"\");\r\n\t};\r\n\r\n\t// import a list of modules into the list\r\n\tlist.i = function(modules, mediaQuery) {\r\n\t\tif(typeof modules === \"string\")\r\n\t\t\tmodules = [[null, modules, \"\"]];\r\n\t\tvar alreadyImportedModules = {};\r\n\t\tfor(var i = 0; i < this.length; i++) {\r\n\t\t\tvar id = this[i][0];\r\n\t\t\tif(typeof id === \"number\")\r\n\t\t\t\talreadyImportedModules[id] = true;\r\n\t\t}\r\n\t\tfor(i = 0; i < modules.length; i++) {\r\n\t\t\tvar item = modules[i];\r\n\t\t\t// skip already imported module\r\n\t\t\t// this implementation is not 100% perfect for weird media query combinations\r\n\t\t\t//  when a module is imported multiple times with different media queries.\r\n\t\t\t//  I hope this will never occur (Hey this way we have smaller bundles)\r\n\t\t\tif(typeof item[0] !== \"number\" || !alreadyImportedModules[item[0]]) {\r\n\t\t\t\tif(mediaQuery && !item[2]) {\r\n\t\t\t\t\titem[2] = mediaQuery;\r\n\t\t\t\t} else if(mediaQuery) {\r\n\t\t\t\t\titem[2] = \"(\" + item[2] + \") and (\" + mediaQuery + \")\";\r\n\t\t\t\t}\r\n\t\t\t\tlist.push(item);\r\n\t\t\t}\r\n\t\t}\r\n\t};\r\n\treturn list;\r\n};\r\n"
+    },
+    {
+      "id": 8,
+      "identifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\node_modules\\@microsoft\\load-themed-styles\\lib\\index.js",
+      "name": "./~/@microsoft/load-themed-styles/lib/index.js",
+      "index": 8,
+      "index2": 5,
+      "size": 9346,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\mycode\\Annoucements\\node_modules\\@microsoft\\loader-load-themed-styles\\lib\\index.js!C:\\mycode\\Annoucements\\node_modules\\css-loader\\index.js?-minimize!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\Announcements.module.css",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 5,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\@microsoft\\loader-load-themed-styles\\lib\\index.js!C:\\mycode\\Annoucements\\node_modules\\css-loader\\index.js?-minimize!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\Announcements.module.css",
+          "module": "./lib/webparts/announcements/Announcements.module.css",
+          "moduleName": "./lib/webparts/announcements/Announcements.module.css",
+          "type": "cjs require",
+          "userRequest": "C:\\mycode\\Annoucements\\node_modules\\@microsoft\\load-themed-styles\\lib\\index.js",
+          "loc": "2:13-109"
+        }
+      ],
+      "source": "/**\n * An IThemingInstruction can specify a rawString to be preserved or a theme slot and a default value\n * to use if that slot is not specified by the theme.\n */\n\"use strict\";\n// IE needs to inject styles using cssText. However, we need to evaluate this lazily, so this\n// value will initialize as undefined, and later will be set once on first loadStyles injection.\nvar _injectStylesWithCssText;\n// Store the theming state in __themeState__ global scope for reuse in the case of duplicate\n// load-themed-styles hosted on the page.\nvar _root = (typeof window === 'undefined') ? global : window; // tslint:disable-line:no-any\nvar _themeState = _root.__themeState__ = _root.__themeState__ || {\n    theme: undefined,\n    lastStyleElement: undefined,\n    registeredStyles: []\n};\n/**\n * Matches theming tokens. For example, \"[theme: themeSlotName, default: #FFF]\" (including the quotes).\n */\n/* tslint:disable: max-line-length */\nvar _themeTokenRegex = /[\\'\\\"]\\[theme:\\s*(\\w+)\\s*(?:\\,\\s*default:\\s*([\\\\\"\\']?[\\.\\,\\(\\)\\#\\-\\s\\w]*[\\.\\,\\(\\)\\#\\-\\w][\\\"\\']?))?\\s*\\][\\'\\\"]/g;\n/* tslint:enable: max-line-length */\n/** Maximum style text length, for supporting IE style restrictions. */\nvar MAX_STYLE_CONTENT_SIZE = 10000;\n/**\n * Loads a set of style text. If it is registered too early, we will register it when the window.load\n * event is fired.\n * @param {string | ThemableArray} styles Themable style text to register.\n */\nfunction loadStyles(styles) {\n    var styleParts = Array.isArray(styles) ? styles : splitStyles(styles);\n    if (_injectStylesWithCssText === undefined) {\n        _injectStylesWithCssText = shouldUseCssText();\n    }\n    applyThemableStyles(styleParts);\n}\nexports.loadStyles = loadStyles;\n/**\n * Allows for customizable loadStyles logic. e.g. for server side rendering application\n * @param {(styles: string) => void} a loadStyles callback that gets called when styles are loaded or reloaded\n */\nfunction configureLoadStyles(callback) {\n    _themeState.loadStyles = callback;\n}\nexports.configureLoadStyles = configureLoadStyles;\n/**\n * Loads a set of style text. If it is registered too early, we will register it when the window.load event\n * is fired.\n * @param {string} styleText Style to register.\n * @param {IStyleRecord} styleRecord Existing style record to re-apply.\n */\nfunction applyThemableStyles(stylesArray, styleRecord) {\n    if (_themeState.loadStyles) {\n        var styles = resolveThemableArray(stylesArray);\n        _themeState.loadStyles(styles);\n    }\n    else {\n        _injectStylesWithCssText ?\n            registerStylesIE(stylesArray, styleRecord) :\n            registerStyles(stylesArray, styleRecord);\n    }\n}\n/**\n * Registers a set theme tokens to find and replace. If styles were already registered, they will be\n * replaced.\n * @param {theme} theme JSON object of theme tokens to values.\n */\nfunction loadTheme(theme) {\n    _themeState.theme = theme;\n    // reload styles.\n    reloadStyles();\n}\nexports.loadTheme = loadTheme;\n/**\n * Reloads styles.\n */\nfunction reloadStyles() {\n    if (_themeState.theme) {\n        for (var _i = 0, _a = _themeState.registeredStyles; _i < _a.length; _i++) {\n            var styleRecord = _a[_i];\n            applyThemableStyles(styleRecord.themableStyle, styleRecord);\n        }\n    }\n}\n/**\n * Find theme tokens and replaces them with provided theme values.\n * @param {string} styles Tokenized styles to fix.\n */\nfunction detokenize(styles) {\n    if (styles) {\n        styles = resolveThemableArray(splitStyles(styles));\n    }\n    return styles;\n}\nexports.detokenize = detokenize;\n/**\n * Resolves ThemingInstruction objects in an array and joins the result into a string.\n * @param {ThemableArray} splitStyleArray ThemableArray to resolve and join.\n */\nfunction resolveThemableArray(splitStyleArray) {\n    var theme = _themeState.theme;\n    var resolvedCss;\n    if (splitStyleArray) {\n        // Resolve the array of theming instructions to an array of strings.\n        // Then join the array to produce the final CSS string.\n        var resolvedArray = splitStyleArray.map(function (currentValue) {\n            var themeSlot = currentValue.theme;\n            if (themeSlot) {\n                // A theming annotation. Resolve it.\n                var themedValue = theme ? theme[themeSlot] : undefined;\n                var defaultValue = currentValue.defaultValue;\n                // Warn to console if we hit an unthemed value even when themes are provided.\n                // Allow the themedValue to be undefined to explicitly request the default value.\n                if (theme && !themedValue && console && !(themeSlot in theme)) {\n                    /* tslint:disable: max-line-length */\n                    console.warn(\"Theming value not provided for \\\"\" + themeSlot + \"\\\". Falling back to \\\"\" + (defaultValue || 'inherit') + \"\\\".\");\n                }\n                return themedValue || defaultValue || 'inherit';\n            }\n            else {\n                // A non-themable string. Preserve it.\n                return currentValue.rawString;\n            }\n        });\n        resolvedCss = resolvedArray.join('');\n    }\n    return resolvedCss;\n}\n/**\n * Split tokenized CSS into an array of strings and theme specification objects\n * @param {string} styles Tokenized styles to split.\n */\nfunction splitStyles(styles) {\n    var result = [];\n    if (styles) {\n        var pos = 0; // Current position in styles.\n        var tokenMatch = void 0;\n        while (tokenMatch = _themeTokenRegex.exec(styles)) {\n            var matchIndex = tokenMatch.index;\n            if (matchIndex > pos) {\n                result.push({\n                    rawString: styles.substring(pos, matchIndex)\n                });\n            }\n            result.push({\n                theme: tokenMatch[1],\n                defaultValue: tokenMatch[2] // May be undefined\n            });\n            // index of the first character after the current match\n            pos = _themeTokenRegex.lastIndex;\n        }\n        // Push the rest of the string after the last match.\n        result.push({\n            rawString: styles.substring(pos)\n        });\n    }\n    return result;\n}\nexports.splitStyles = splitStyles;\n/**\n * Registers a set of style text. If it is registered too early, we will register it when the\n * window.load event is fired.\n * @param {ThemableArray} styleArray Array of IThemingInstruction objects to register.\n * @param {IStyleRecord} styleRecord May specify a style Element to update.\n */\nfunction registerStyles(styleArray, styleRecord) {\n    var head = document.getElementsByTagName('head')[0];\n    var styleElement = document.createElement('style');\n    styleElement.type = 'text/css';\n    styleElement.appendChild(document.createTextNode(resolveThemableArray(styleArray)));\n    if (styleRecord) {\n        head.replaceChild(styleElement, styleRecord.styleElement);\n        styleRecord.styleElement = styleElement;\n    }\n    else {\n        head.appendChild(styleElement);\n    }\n    if (!styleRecord) {\n        _themeState.registeredStyles.push({\n            styleElement: styleElement,\n            themableStyle: styleArray\n        });\n    }\n}\n/**\n * Registers a set of style text, for IE 9 and below, which has a ~30 style element limit so we need\n * to register slightly differently.\n * @param {ThemableArray} styleArray Array of IThemingInstruction objects to register.\n * @param {IStyleRecord} styleRecord May specify a style Element to update.\n */\nfunction registerStylesIE(styleArray, styleRecord) {\n    var head = document.getElementsByTagName('head')[0];\n    var lastStyleElement = _themeState.lastStyleElement, registeredStyles = _themeState.registeredStyles;\n    var stylesheet = lastStyleElement ? lastStyleElement.styleSheet : undefined;\n    var lastStyleContent = stylesheet ? stylesheet.cssText : '';\n    var lastRegisteredStyle = registeredStyles[registeredStyles.length - 1];\n    var resolvedStyleText = resolveThemableArray(styleArray);\n    if (!lastStyleElement || (lastStyleContent.length + resolvedStyleText.length) > MAX_STYLE_CONTENT_SIZE) {\n        lastStyleElement = document.createElement('style');\n        lastStyleElement.type = 'text/css';\n        if (styleRecord) {\n            head.replaceChild(lastStyleElement, styleRecord.styleElement);\n            styleRecord.styleElement = lastStyleElement;\n        }\n        else {\n            head.appendChild(lastStyleElement);\n        }\n        if (!styleRecord) {\n            lastRegisteredStyle = {\n                styleElement: lastStyleElement,\n                themableStyle: styleArray\n            };\n            registeredStyles.push(lastRegisteredStyle);\n        }\n    }\n    lastStyleElement.styleSheet.cssText += detokenize(resolvedStyleText);\n    Array.prototype.push.apply(lastRegisteredStyle.themableStyle, styleArray); // concat in-place\n    // Preserve the theme state.\n    _themeState.lastStyleElement = lastStyleElement;\n}\n/**\n * Checks to see if styleSheet exists as a property off of a style element.\n * This will determine if style registration should be done via cssText (<= IE9) or not\n */\nfunction shouldUseCssText() {\n    var useCSSText = false;\n    if (typeof document !== 'undefined') {\n        var emptyStyle = document.createElement('style');\n        emptyStyle.type = 'text/css';\n        useCSSText = !!emptyStyle.styleSheet;\n    }\n    return useCSSText;\n}\n\n"
+    },
+    {
+      "id": 9,
+      "identifier": "external \"announcementsStrings\"",
+      "name": "external \"announcementsStrings\"",
+      "index": 9,
+      "index2": 8,
+      "size": 42,
+      "cacheable": false,
+      "built": false,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+          "module": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "moduleName": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "type": "cjs require",
+          "userRequest": "announcementsStrings",
+          "loc": "13:14-45"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "identifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\MockHttpClient.js",
+      "name": "./lib/webparts/announcements/MockHttpClient.js",
+      "index": 10,
+      "index2": 9,
+      "size": 631,
+      "cacheable": true,
+      "built": true,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+          "module": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "moduleName": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "type": "cjs require",
+          "userRequest": "./MockHttpClient",
+          "loc": "15:23-50"
+        }
+      ],
+      "source": "\"use strict\";\nvar MockHttpClient = (function () {\n    function MockHttpClient() {\n    }\n    MockHttpClient.get = function () {\n        return new Promise(function (resolve) {\n            resolve(MockHttpClient._items);\n        });\n    };\n    return MockHttpClient;\n}());\nMockHttpClient._items = [{ Title: 'Test Announcement 1', Id: '1', Expires: '2017-04-22T04:00:00Z' },\n    { Title: 'Test Announcement 2', Id: '2', Expires: '2017-03-24T04:00:00Z' },\n    { Title: 'Test Announcement 3', Id: '3', Expires: '2017-01-12T04:00:00Z' }];\nObject.defineProperty(exports, \"__esModule\", { value: true });\nexports.default = MockHttpClient;\n\n"
+    },
+    {
+      "id": 11,
+      "identifier": "external \"@microsoft/sp-http\"",
+      "name": "external \"@microsoft/sp-http\"",
+      "index": 11,
+      "index2": 10,
+      "size": 42,
+      "cacheable": false,
+      "built": false,
+      "optional": false,
+      "prefetched": false,
+      "chunks": [
+        0
+      ],
+      "assets": [],
+      "issuer": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+      "failed": false,
+      "errors": 0,
+      "warnings": 0,
+      "reasons": [
+        {
+          "moduleId": 0,
+          "moduleIdentifier": "C:\\mycode\\Annoucements\\node_modules\\source-map-loader\\index.js!C:\\mycode\\Annoucements\\lib\\webparts\\announcements\\AnnouncementsWebPart.js",
+          "module": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "moduleName": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+          "type": "cjs require",
+          "userRequest": "@microsoft/sp-http",
+          "loc": "17:16-45"
+        }
+      ]
+    }
+  ],
+  "filteredModules": 0,
+  "children": []
+}

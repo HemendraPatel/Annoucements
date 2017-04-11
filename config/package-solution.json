@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "name": "annoucements-client-side-solution",
+    "id": "e79c20f2-97fb-40d6-a775-b73f6af22203",
+    "version": "1.0.0.0"
+  },
+  "paths": {
+    "zippedPackage": "solution/annoucements.sppkg"
+  }
+}

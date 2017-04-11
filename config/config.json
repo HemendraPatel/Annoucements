@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "entry": "./lib/webparts/announcements/AnnouncementsWebPart.js",
+      "manifest": "./src/webparts/announcements/AnnouncementsWebPart.manifest.json",
+      "outputPath": "./dist/announcements.bundle.js"
+    }
+  ],
+  "externals": {},
+  "localizedResources": {
+    "announcementsStrings": "webparts/announcements/loc/{locale}.js"
+  }
+}

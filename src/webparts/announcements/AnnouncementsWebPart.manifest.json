@@ -1,0 +1,20 @@
+{
+  "$schema": "../../../node_modules/@microsoft/sp-module-interfaces/lib/manifestSchemas/jsonSchemas/clientSideComponentManifestSchema.json",
+
+  "id": "8f7f94e6-353c-4940-b742-743385655a15",
+  "alias": "AnnouncementsWebPart",
+  "componentType": "WebPart",
+  "version": "0.0.1",
+  "manifestVersion": 2,
+
+  "preconfiguredEntries": [{
+    "groupId": "8f7f94e6-353c-4940-b742-743385655a15",
+    "group": { "default": "Under Development" },
+    "title": { "default": "announcements" },
+    "description": { "default": "announcements for home page" },
+    "officeFabricIconFontName": "Page",
+    "properties": {
+      "description": "announcements"
+    }
+  }]
+}
